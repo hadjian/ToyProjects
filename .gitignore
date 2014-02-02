@@ -1,0 +1,12 @@
+ToyMatrix
+toymatrix-external-prefix
+ToyRenderer
+toyrenderer-external-prefix
+gtest-1.6.0
+gtest-external-prefix
+gtest-1.7.0
+CMakeCache.txt
+CMakeFiles
+Makefile
+cmake_install.cmake
+toymatrix_inject_variables.cmake
