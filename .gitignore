@@ -10,3 +10,4 @@ CMakeFiles
 Makefile
 cmake_install.cmake
 toymatrix_inject_variables.cmake
+toyrenderer_inject_variables.cmake

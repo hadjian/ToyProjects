@@ -19,16 +19,17 @@ ExternalProject_Add(gtest-external
                      BINARY_DIR        ${gtest_dir}
                      INSTALL_COMMAND   echo "Not invoking install")
 
+
 # For the ToyMatrix subproject we want to find our own version of gtest through
 # the normal find_package() cmake command, but w/o writing code for this into
 # the ToyMatrix' CMakeLists.cmake file, such that it can still be used outside
 # this superproject.
 # 
-# To achieve this we inject cached variables into the ToyMatrix subproject.  
-set(INJECT_FIND_PATH ${CMAKE_CURRENT_LIST_DIR})
+# To achieve this, we inject cached variables into the ToyMatrix subproject.  
+set(INJECT_FIND_PATH ${CMAKE_CURRENT_LIST_DIR}/cmake)
 set(INJECT_GTEST_PATH "${CMAKE_CURRENT_LIST_DIR}/${gtest_dir}")
-configure_file(toymatrix_inject_variables.cmake.in
-                 "toymatrix_inject_variables.cmake" @ONLY)
+configure_file(cmake/toymatrix_inject_variables.cmake.in
+                 "cmake/toymatrix_inject_variables.cmake" @ONLY)
 
 ExternalProject_Add(toymatrix-external
                      DEPENDS           gtest-external
@@ -36,16 +37,25 @@ ExternalProject_Add(toymatrix-external
                      GIT_TAG           master
                      DOWNLOAD_DIR      ${toymatrix_dir}
                      SOURCE_DIR        ${toymatrix_dir}
-                     CONFIGURE_COMMAND cmake -C${CMAKE_CURRENT_LIST_DIR}/toymatrix_inject_variables.cmake  .
+                     CONFIGURE_COMMAND cmake -C${CMAKE_CURRENT_LIST_DIR}/cmake/toymatrix_inject_variables.cmake  .
                      BINARY_DIR        ${toymatrix_dir}
                      INSTALL_COMMAND   echo "Not invoking install")
 
+
+# The ToyRenderer in this superproject shall find the ToyMatrix project
+# in the same directory. Injecting the appropriate cached variables. 
+set(INJECT_FIND_PATH ${CMAKE_CURRENT_LIST_DIR}/cmake)
+set(INJECT_TOYMATRIX_PATH "${CMAKE_CURRENT_LIST_DIR}/${toymatrix_dir}")
+configure_file(cmake/toyrenderer_inject_variables.cmake.in
+                 "cmake/toyrenderer_inject_variables.cmake" @ONLY)
+
 ExternalProject_Add(toyrenderer-external
+                     DEPENDS           toymatrix-external
                      GIT_REPOSITORY    https://github.com/hadjian/${toyrenderer_dir}.git
                      GIT_TAG           master
                      DOWNLOAD_DIR      ${toyrenderer_dir}
                      SOURCE_DIR        ${toyrenderer_dir}
-                     CONFIGURE_COMMAND cmake .
+                     CONFIGURE_COMMAND cmake -C${CMAKE_CURRENT_LIST_DIR}/cmake/toyrenderer_inject_variables.cmake  .
                      BINARY_DIR        ${toyrenderer_dir}
                      INSTALL_COMMAND   echo "Not invoking install")
 
