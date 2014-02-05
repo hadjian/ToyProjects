@@ -1,2 +1,0 @@
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} @INJECT_FIND_PATH@ CACHE PATH "Adding superproject dir to searchpath to find custom FindGTest.cmake")
-set(GTEST_DIR @INJECT_GTEST_PATH@ CACHE PATH "Path to our project gtest.")
