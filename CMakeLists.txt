@@ -12,7 +12,7 @@ set(toyrenderer_dir ToyRenderer)
 
 ExternalProject_Add(gtest-external
                      GIT_REPOSITORY    https://github.com/hadjian/${gtest_dir}.git
-                     GIT_TAG           master
+                     GIT_TAG           linux-glew-and-multiconf
                      DOWNLOAD_DIR      ${gtest_dir}
                      SOURCE_DIR        ${gtest_dir}
                      CONFIGURE_COMMAND cmake .
@@ -34,7 +34,7 @@ configure_file(cmake/toymatrix_inject_variables.cmake.in
 ExternalProject_Add(toymatrix-external
                      DEPENDS           gtest-external
                      GIT_REPOSITORY    https://github.com/hadjian/${toymatrix_dir}.git
-                     GIT_TAG           master
+                     GIT_TAG           linux-glew-and-multiconf 
                      DOWNLOAD_DIR      ${toymatrix_dir}
                      SOURCE_DIR        ${toymatrix_dir}
                      CONFIGURE_COMMAND cmake -C${CMAKE_CURRENT_LIST_DIR}/cmake/toymatrix_inject_variables.cmake  .
@@ -52,7 +52,7 @@ configure_file(cmake/toyrenderer_inject_variables.cmake.in
 ExternalProject_Add(toyrenderer-external
                      DEPENDS           toymatrix-external
                      GIT_REPOSITORY    https://github.com/hadjian/${toyrenderer_dir}.git
-                     GIT_TAG           master
+                     GIT_TAG           linux-glew-and-multiconf 
                      DOWNLOAD_DIR      ${toyrenderer_dir}
                      SOURCE_DIR        ${toyrenderer_dir}
                      CONFIGURE_COMMAND cmake -C${CMAKE_CURRENT_LIST_DIR}/cmake/toyrenderer_inject_variables.cmake  .
