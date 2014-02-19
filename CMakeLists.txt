@@ -98,7 +98,7 @@ ExternalProject_Add(toyrenderer-external
                      DEPENDS           toymatrix-external
                      PREFIX            cmake/toyrenderer-external-prefix
                      DOWNLOAD_COMMAND  ${TOYRENDERER_DOWNLOAD_CMD} 
-                     DOWNLOAD_DIR      ${CMAKE-CURRENT_LIST_DIR}
+                     DOWNLOAD_DIR      ${CMAKE_CURRENT_LIST_DIR}
                      UPDATE_COMMAND    git fetch 
                      SOURCE_DIR        ${TOYRENDERER_DIR}
                      CONFIGURE_COMMAND cmake -DCMAKE_BUILD_TYPE:STRING=${BUILD_TYPE} -C${CMAKE_CURRENT_LIST_DIR}/cmake/toyrenderer_inject_variables.cmake ${TOYRENDERER_ABS_DIR} 
