@@ -7,10 +7,14 @@
 #   CLONE_DIR  - Name of directory to which to clone to.
 #   
 
+
 if(DEFINED CLONE_URL AND DEFINED CLONE_TAG AND DEFINED CLONE_DIR)
   if(NOT EXISTS ${CLONE_DIR}/.git)
     message("Cloning ${CLONE_URL}!")
     execute_process(COMMAND git clone --branch ${CLONE_TAG} ${CLONE_URL} ${CLONE_DIR})     
+    if(DEFINED VERSION)
+      execute_process(COMMAND git checkout ${VERSION} WORKING_DIRECTORY ${CLONE_DIR})     
+    endif(DEFINED VERSION)
   else(NOT EXISTS ${CLONE_DIR}/.git)
     message("Path ${CLONE_DIR}/.git already exists. Skipping clone.")
   endif(NOT EXISTS ${CLONE_DIR}/.git)
