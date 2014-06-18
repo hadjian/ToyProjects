@@ -1,2 +1,4 @@
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} @INJECT_FIND_PATH@ CACHE PATH "Adding superproject dir to searchpath to find custom FindToyMatrix.cmake")
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} @INJECT_FIND_PATH@ CACHE PATH "Adding superproject dir to searchpath to find custom Find<subproject>.cmake files")
 set(TOYMATRIX_DIR @INJECT_TOYMATRIX_PATH@ CACHE PATH "Path to our project's ToyMatrix.")
+set(GTEST_DIR @INJECT_GTEST_PATH@ CACHE PATH "Path to our project gtest.")
+set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} @INJECT_GLEW_PATH@ CACHE PATH "Path to our project glew.") 
