@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8.8)
+cmake_minimum_required(VERSION 2.8.7)
 project(ToyProjects)
 
 set(ToyProject_VERSION_MAJOR 0)
@@ -25,11 +25,14 @@ set(BUILD_TYPE Release CACHE STRING "Set default build type. Modify by 'cmake -D
 #
 # TODO: Switch to the recommended way to do this, once it is widely available.
 #-------------------------------------------------------------------------------
-find_package(GTest 1.6.0 EXACT)
+#find_package(GTest QUIET)
+# The cmake config of the official GTest project is broken IMHO. We will use our
+# own version regardless of any installed version in the system.
+set(GTest_FOUND "")
 if( NOT GTest_FOUND ) 
   get_filename_component(GTEST_ABS_DIR ${GTEST_DIR} ABSOLUTE)
 
-  set(GTEST_DOWNLOAD_CMD cmake -DCLONE_URL=git@github.com:hadjian/gtest-1.6.0.git)
+  set(GTEST_DOWNLOAD_CMD cmake -DCLONE_URL=https://github.com/hadjian/gtest-1.6.0.git)
   set(GTEST_DOWNLOAD_CMD ${GTEST_DOWNLOAD_CMD} -DCLONE_TAG=projection)
   set(GTEST_DOWNLOAD_CMD ${GTEST_DOWNLOAD_CMD} -DCLONE_DIR=${GTEST_DIR})
   set(GTEST_DOWNLOAD_CMD ${GTEST_DOWNLOAD_CMD} -P ${CMAKE_CURRENT_SOURCE_DIR}/cmake/safe_git_clone.cmake)
@@ -46,19 +49,23 @@ if( NOT GTest_FOUND )
 else( NOT GTest_FOUND )
   message("Found GTest in the system. Skipping compilation of included source.")
   # We will define all required targets to do nothing
-  add_custom_target(gtest-external)
-  add_custom_target(gtest-external-download)
-  add_custom_target(gtest-external-update)
-  add_custom_target(gtest-external-configure)
+  ExternalProject_Add(gtest-external
+		       PREFIX            cmake/gtest-external-prefix
+		       DOWNLOAD_COMMAND  ${CMAKE_COMMAND} -E echo "Using system gtest" 
+		       DOWNLOAD_DIR      ${CMAKE_CURRENT_LIST_DIR}
+		       UPDATE_COMMAND    ${CMAKE_COMMAND} -E echo "Using system gtest" 
+		       SOURCE_DIR        ${gtest_DIR}
+		       CONFIGURE_COMMAND ${CMAKE_COMMAND} -E echo "No need to configure. Makefile based."  
+		       BUILD_COMMAND      ${CMAKE_COMMAND} -E echo "No need to configure. Makefile based."  
+		       BUILD_IN_SOURCE   1
+		       INSTALL_COMMAND   ${CMAKE_COMMAND} -E echo "Not invoking install")
 endif( NOT GTest_FOUND )
 
-
-find_package(GLEW 1.5)
-find_package(GLEW 1.10)
-if( NOT GLEW_FOUND )
+find_library(GLEW_LIBRARY GLEW)
+if( NOT GLEW_LIBRARY )
   get_filename_component(GLEW_ABS_DIR ${GLEW_DIR} ABSOLUTE)
 
-  set(GLEW_DOWNLOAD_CMD cmake -DCLONE_URL=git@github.com:hadjian/glew-1.10.0.git)
+  set(GLEW_DOWNLOAD_CMD cmake -DCLONE_URL=https://github.com/hadjian/glew-1.10.0.git)
   set(GLEW_DOWNLOAD_CMD ${GLEW_DOWNLOAD_CMD} -DCLONE_TAG=projection)
   set(GLEW_DOWNLOAD_CMD ${GLEW_DOWNLOAD_CMD} -DCLONE_DIR=${GLEW_DIR})
   set(GLEW_DOWNLOAD_CMD ${GLEW_DOWNLOAD_CMD} -P ${CMAKE_CURRENT_SOURCE_DIR}/cmake/safe_git_clone.cmake)
@@ -72,15 +79,21 @@ if( NOT GLEW_FOUND )
                        CONFIGURE_COMMAND ${CMAKE_COMMAND} -E echo "No need to configure. Makefile based."  
                        BUILD_COMMAND     make 
                        BUILD_IN_SOURCE   1
-                       INSTALL_COMMAND   echo "Not invoking install")
-else( NOT GLEW_FOUND )
+		       INSTALL_COMMAND   ${CMAKE_COMMAND} -E echo "Not invoking install")
+else( NOT GLEW_LIBRARY )
   message("Found GLEW in the system. Skipping compilation of included source.")
   # We will define all required targets to do nothing
-  add_custom_target(glew-external)
-  add_custom_target(glew-external-download)
-  add_custom_target(glew-external-update)
-  add_custom_target(glew-external-configure)
-endif( NOT GLEW_FOUND )
+  ExternalProject_Add(glew-external
+                       PREFIX            cmake/glew-external-prefix
+		       DOWNLOAD_COMMAND  ${CMAKE_COMMAND} -E echo "Using system glew" 
+                       DOWNLOAD_DIR      ${CMAKE_CURRENT_LIST_DIR}
+                       UPDATE_COMMAND    ${CMAKE_COMMAND} -E echo "Using system glew" 
+                       SOURCE_DIR        ${GLEW_DIR}
+                       CONFIGURE_COMMAND ${CMAKE_COMMAND} -E echo "No need to configure. Makefile based."  
+                       BUILD_COMMAND      ${CMAKE_COMMAND} -E echo "No need to configure. Makefile based."  
+                       BUILD_IN_SOURCE   1
+		       INSTALL_COMMAND   ${CMAKE_COMMAND} -E echo "Not invoking install")
+endif( NOT GLEW_LIBRARY )
 
 #-------------------------------------------------------------------------------
 # For the ToyMatrix subproject we want to find our own version of gtest through
@@ -101,7 +114,7 @@ configure_file(cmake/toymatrix_inject_variables.cmake.in
 #-------------------------------------------------------------------------------
 get_filename_component(TOYMATRIX_ABS_DIR ${TOYMATRIX_DIR} ABSOLUTE)
 
-set(TOYMATRIX_DOWNLOAD_CMD cmake -DCLONE_URL=git@github.com:hadjian/${TOYMATRIX_DIR}.git)
+set(TOYMATRIX_DOWNLOAD_CMD cmake -DCLONE_URL=https://github.com/hadjian/${TOYMATRIX_DIR}.git)
 set(TOYMATRIX_DOWNLOAD_CMD ${TOYMATRIX_DOWNLOAD_CMD} -DCLONE_TAG=projection)
 set(TOYMATRIX_DOWNLOAD_CMD ${TOYMATRIX_DOWNLOAD_CMD} -DCLONE_DIR=${TOYMATRIX_DIR})
 set(TOYMATRIX_DOWNLOAD_CMD ${TOYMATRIX_DOWNLOAD_CMD} -P ${CMAKE_CURRENT_SOURCE_DIR}/cmake/safe_git_clone.cmake)
@@ -132,7 +145,7 @@ configure_file(cmake/toyrenderer_inject_variables.cmake.in
 #-------------------------------------------------------------------------------
 GET_FILENAME_COMPONENT(TOYRENDERER_ABS_DIR ${TOYRENDERER_DIR} ABSOLUTE)
 
-set(TOYRENDERER_DOWNLOAD_CMD cmake -DCLONE_URL=git@github.com:hadjian/${TOYRENDERER_DIR}.git)
+set(TOYRENDERER_DOWNLOAD_CMD cmake -DCLONE_URL=https://github.com/hadjian/${TOYRENDERER_DIR}.git)
 set(TOYRENDERER_DOWNLOAD_CMD ${TOYRENDERER_DOWNLOAD_CMD} -DCLONE_TAG=projection)
 set(TOYRENDERER_DOWNLOAD_CMD ${TOYRENDERER_DOWNLOAD_CMD} -DCLONE_DIR=${TOYRENDERER_DIR})
 set(TOYRENDERER_DOWNLOAD_CMD ${TOYRENDERER_DOWNLOAD_CMD} -P ${CMAKE_CURRENT_SOURCE_DIR}/cmake/safe_git_clone.cmake)
@@ -162,11 +175,11 @@ set( DOWNLOAD_TARGETS ${DOWNLOAD_TARGETS} gtest-external-download )
 set( UPDATE_TARGETS   ${UPDATE_TARGETS}   gtest-external-update   )
 endif ( NOT GTEST_FOUND )
 
-if ( NOT GLEW_FOUND )
+if ( NOT GLEW_LIBRARY )
 ExternalProject_Add_StepTargets(glew-external download update configure)
 set( DOWNLOAD_TARGETS ${DOWNLOAD_TARGETS} glew-external-download )
 set( UPDATE_TARGETS   ${UPDATE_TARGETS}   glew-external-update   )
-endif ( NOT GLEW_FOUND )
+endif ( NOT GLEW_LIBRARY )
 
 ExternalProject_Add_StepTargets(toymatrix-external   download update configure)
 ExternalProject_Add_StepTargets(toyrenderer-external download update configure)

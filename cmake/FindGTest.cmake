@@ -14,7 +14,7 @@
 # something to do with packages always being all caps per convention (although
 # the FindXXX.cmake file is also found if written in ExactCase). I bystep
 # this by using the NAMES option.
-find_package(GTEST REQUIRED NO_MODULE NAMES GTest)
+find_package(GTEST NO_MODULE NAMES GTest)
 
 include(FindPackageHandleStandardArgs)
 find_package_handle_standard_args(GTEST REQUIRED_VARS 
