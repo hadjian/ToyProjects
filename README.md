@@ -5,7 +5,7 @@ This project contains a single CMakeLists.txt files, which
 will download all subprojects for you. Just run
 
     cmake .
-    make download
+    make external-download
     
 Currently it will download the master branch of every project.
 In the future releases and dependencies will be maintained
